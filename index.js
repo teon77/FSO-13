@@ -1,6 +1,7 @@
 require("dotenv").config();
 const { Sequelize, Model, DataTypes } = require("sequelize");
 const express = require("express");
+const req = require("express/lib/request");
 const app = express();
 
 app.use(express.json());
@@ -47,6 +48,8 @@ Blog.init(
   }
 );
 
+Blog.sync();
+
 app.post("/api/blogs", async (req, res) => {
   try {
     const blog = await Blog.create(req.body);
@@ -54,6 +57,26 @@ app.post("/api/blogs", async (req, res) => {
   } catch (err) {
     return res.status(400).json({ err });
   }
+});
+
+app.get("api/blogs/:id", async (req, res) => {
+  const blog = await Blog.findByPk(req.params.id);
+  if (blog) {
+    res.json(blog);
+  } else {
+    res.status(404).end();
+  }
+});
+
+app.delete("api/blogs/:id", async (req, res) => {
+  const deleteComplete = await Blog.destroy({
+    where: {
+      id: req.params.id,
+    },
+  });
+  deleteComplete === 1
+    ? res.send("deleted successfully")
+    : res.status(400).send("didnt find such blog");
 });
 
 app.get("/api/blogs", async (req, res) => {
