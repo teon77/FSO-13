@@ -37,7 +37,7 @@ router.delete(":id", async (req, res) => {
   });
   deleteComplete === 1
     ? res.send("deleted successfully")
-    : res.status(400).send("didn't find such blog");
+    : res.status(400).send("oops, didn't find such blog");
 });
 
 router.put("/:id", blogFinder, async (req, res) => {
